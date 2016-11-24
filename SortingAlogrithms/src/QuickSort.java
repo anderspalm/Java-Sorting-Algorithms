@@ -12,13 +12,64 @@ import java.util.Arrays;
 public class QuickSort {
 
     private String finishedArray;
-    private int pivot;
-    private int mid;
-    private String start;
     public ArrayList<Integer> mMaster = new ArrayList<>();
     Boolean first = true;
+    public int wall;
+    public int pivot;
+    private int mid;
+    private String start;
+    public boolean mDoneAlready;
 
-    public void quickSort(int[] array, int beg, int end) {
+
+    public void quicksortEndPivot(int[] array, int beg, int end) {
+        wall = beg;
+        pivot = end;
+        mDoneAlready = true;
+        // Here is a check if the array is already sorted and set to break if it is not ascending
+        for (int i = 0; i < array.length; i++) {
+            if (i > 0) {
+                if (array[i] < array[i - 1]) {
+                    mDoneAlready = false;
+                    break;
+                }
+            }
+        }
+        if (!mDoneAlready) {
+            if (beg < end && end > 0) {
+                if ((end - beg) == 1) {
+                    //
+                    if (array[beg] > array[end]) {
+                        int temp = array[beg];
+                        array[beg] = array[end];
+                        array[end] = temp;
+                    }
+                } else {
+                    for (int i = beg; i <= end; i++) {
+                        if (i == pivot) {
+                            // the wall has a value that is larger than the pivot so swap these two at the end of the sweep
+                            int temp = array[i];
+                            array[i] = array[wall];
+                            array[wall] = temp;
+                        } else {
+                            if (array[i] < array[pivot]) {
+                                int temp = array[i];
+                                array[i] = array[wall];
+                                array[wall] = temp;
+                                wall += 1;
+                            }
+                        }
+                    }
+                    if (wall - 1 > 0) {
+                        quicksortEndPivot(array, beg, wall - 1);
+                        quicksortEndPivot(array, wall, end);
+                    }
+                }
+            }
+        }
+    }
+
+
+    public void quickSortTwo(int[] array, int beg, int end) {
         if (beg >= end || array.length == 0) {
 //          just leave the function if we have a problem with the input
             return;
@@ -47,15 +98,16 @@ public class QuickSort {
 
             if (i <= j) {
                 swapIndexes(array, i, j);
-                i++;j--;
+                i++;
+                j--;
             }
         }
 
         if (beg < j) {
-            quickSort(array, beg, j);
+            quickSortTwo(array, beg, j);
         }
         if (end > i) {
-            quickSort(array, i, end);
+            quickSortTwo(array, i, end);
         }
         return;
     }
